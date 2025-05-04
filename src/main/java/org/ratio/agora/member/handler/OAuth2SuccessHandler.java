@@ -33,7 +33,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuthProvider provider = OAuthProvider.GOOGLE;
 
         Member member = oAuth2MemberService.process(oAuth2User, provider);
-        String token = jwtProvider.createToken(member.getId());
+        String token = jwtProvider.createToken(member.getId(), member.getMemberGrade().name());
 
         response.setContentType("application/json");
         response.getWriter().write("{\"token\": \"" + token + "\"}");

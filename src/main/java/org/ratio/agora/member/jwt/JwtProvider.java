@@ -25,12 +25,13 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Long memberId) {
+    public String createToken(Long memberId, String role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMillis);
 
         return Jwts.builder()
                 .setSubject(memberId.toString())
+                .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -40,6 +41,11 @@ public class JwtProvider {
     public Long getMemberId(String token) {
         Claims claims = parseClaims(token);
         return Long.parseLong(claims.getSubject());
+    }
+
+
+    public String getRole(String token) {
+        return (String) parseClaims(token).get("role");
     }
 
     public boolean validateToken(String token) {

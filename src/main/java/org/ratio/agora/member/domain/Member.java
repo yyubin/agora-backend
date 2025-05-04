@@ -26,6 +26,7 @@ public class Member {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Profile profile;
 
+    @Column(nullable = false)
     private boolean isPhoneVerified;
 
     @Column(unique = true)
@@ -36,6 +37,9 @@ public class Member {
         return provider.name() + ":" + oauthId;
     }
 
+    @Column(nullable = false)
+    public MemberGrade memberGrade;
+
     @Builder
     public Member(String oauthId, OAuthProvider provider, String email, Profile profile, boolean isPhoneVerified, String phoneNumber) {
         this.oauthId = oauthId;
@@ -43,6 +47,7 @@ public class Member {
         this.email = email;
         this.profile = profile;
         this.isPhoneVerified = isPhoneVerified;
+        this.memberGrade = MemberGrade.USER;
     }
 
 }
