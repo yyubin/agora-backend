@@ -2,6 +2,7 @@ package org.ratio.agora.member.resolver;
 
 import lombok.RequiredArgsConstructor;
 import org.ratio.agora.member.domain.Member;
+import org.ratio.agora.member.exception.MemberException;
 import org.ratio.agora.member.resolver.annotation.AuthMember;
 import org.ratio.agora.member.service.MemberQueryService;
 import org.springframework.core.MethodParameter;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import static org.ratio.agora.member.exception.MemberErrorCode.UNAUTHORIZED_ACCESS;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +31,9 @@ public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getPrincipal() == null) return null;
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new MemberException(UNAUTHORIZED_ACCESS);
+        }
 
         Long memberId = (Long) auth.getPrincipal();
         return memberQueryService.getById(memberId);
